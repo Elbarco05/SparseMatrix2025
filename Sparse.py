@@ -146,6 +146,30 @@ class SparseMatrix:
         sum._shape = self._shape
         return sum
 
+     def __vec__mul__ (self, other):
+        #har inte error än för att det inte funkade :(
+        Jim = []    #every columb index has a corresponding value in the multiplier vector which is stored in Jim
+        Bob = []    #resulting array but in listform (Rob is the corresponding array
+        
+        for i in range(len(self._col_index)):
+            Vec = other[self._col_index[i]]
+            Jim.append(Vec)
+
+        Post_mul = self._V * Jim   #unsliced array containing the values V times their matching part of the vector
+
+        for i in range(len(self._row_counter)-1):
+            if self._row_counter[i+1] - self._row_counter[i] != 0:
+                Vslice = Post_mul[self._row_counter[i]:self._row_counter[i+1]]  #splits up the multiplied values to the right row
+                Vlist = Vslice.tolist()                 #and makes every slice be a list
+            else:
+                Vlist = [0]
+            V_sum = sum(Vlist)              #sums up the list giving the total worth of one row in the new array
+            Bob.append(V_sum)
+
+        Rob = np.array(Bob)                 #makes the list an array that can later be converted into a new sparse matrix
+            
+        return Rob   
+    
     def edit(self, x, i, j):
         isOccupied = False
         nonZero = False
